@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepVerse - Your Exam Preparation Mission</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #8B5CF6;
+            --secondary: #EC4899;
+            --accent: #10B981;
+            --dark: #121212;
+            --card-bg: rgba(17, 25, 40, 0.75);
+            --glass-bg: rgba(17, 25, 40, 0.6);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark);
+            background-image: 
+                radial-gradient(at 47% 33%, hsl(263, 90%, 32%) 0, transparent 59%), 
+                radial-gradient(at 82% 65%, hsl(330, 85%, 38%) 0, transparent 55%);
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(7px);
+            -webkit-backdrop-filter: blur(7px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.3);
+        }
+        
+        .glow-btn {
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            background-size: 200% auto;
+            animation: glow 3s linear infinite;
+            transition: all 0.3s ease;
+        }
+        
+        @keyframes glow {
+            0% {background-position: 0% center;}
+            50% {background-position: 100% center;}
+            100% {background-position: 0% center;}
+        }
+        
+        .glow-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5);
+        }
+        
+        #planet-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            margin: 0 auto;
+        }
+        
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: 1s;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .navbar-item {
+            position: relative;
+        }
+        
+        .navbar-item::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+        
+        .navbar-item:hover::after {
+            width: 100%;
+        }
+        
+        .quote-carousel {
+            overflow: hidden;
+            height: 80px;
+        }
+        
+        .quote {
+            animation: fadeInOut 10s infinite;
+            opacity: 0;
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(20px); }
+            10%, 90% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .exam-tag {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 5px 15px;
+            margin: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .exam-tag:hover {
+            background: var(--primary);
+            transform: scale(1.05);
+        }
+        
+        /* Hero animation */
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #planet-container {
+                height: 300px;
+            }
+            
+            .quote-carousel {
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loader"></div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="glass fixed w-full z-10 top-0 px-4 py-2">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <svg class="w-8 h-8 text-purple-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838l-2.727 1.17 1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
+                </svg>
+                <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">PrepVerse</span>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="navbar-item transition-all">Home</a>
+                <a href="pages/dashboard.html" class="navbar-item transition-all">Features</a>
+                <a href="pages/pomodoro.html" class="navbar-item transition-all">Pomodoro</a>
+                <a href="pages/planet.html" class="navbar-item transition-all">Planet</a>
+                <a href="pages/tasks.html" class="navbar-item transition-all">Task Management</a>
+                
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="hidden md:block px-4 py-2 rounded-lg glass hover:bg-opacity-80 transition-all">Login</button>
+                <button class="px-4 py-2 rounded-lg glow-btn">Sign Up</button>
+                <button class="md:hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 pt-24">
+        <!-- Hero Section -->
+        <section class="flex flex-col md:flex-row items-center justify-between py-12">
+            <div class="md:w-1/2 space-y-6 text-center md:text-left">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                    Accelerate Your <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">Exam Preparation</span>
+                </h1>
+                <div class="quote-carousel relative h-20">
+                    <p class="quote" style="animation-delay: 0s">"Success is not final, failure is not fatal: It is the courage to continue that counts."</p>
+                    <p class="quote" style="animation-delay: 10s">"The secret of getting ahead is getting started."</p>
+                    <p class="quote" style="animation-delay: 20s">"The future belongs to those who believe in the beauty of their dreams."</p>
+                </div>
+                <div class="flex flex-wrap justify-center md:justify-start gap-2">
+                    <span class="exam-tag">NEET</span>
+                    <span class="exam-tag">JEE</span>
+                    <span class="exam-tag">IAS</span>
+                    <span class="exam-tag">GATE</span>
+                    <span class="exam-tag">Placements</span>
+                </div>
+                <div class="pt-4">
+                    <button class="glow-btn px-8 py-3 rounded-xl text-lg font-medium shadow-lg">
+                        Start Your Mission
+                    </button>
+                </div>
+            </div>
+            <div class="md:w-1/2 mt-12 md:mt-0">
+                <div id="planet-container" class="float-animation"></div>
+            </div>
+        </section>
+
+        <!-- Features Overview -->
+        <section class="py-16">
+            <h2 class="text-3xl font-bold text-center mb-12">Your Study Command Center</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="card p-6 flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Pomodoro Timer</h3>
+                    <p class="text-gray-300">Stay focused with customizable study sessions and breaks. Track your productivity over time.</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="card p-6 flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Task Management</h3>
+                    <p class="text-gray-300">Organize your tasks with priorities and deadlines. Never miss important study goals.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="card p-6 flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Progress Tracking</h3>
+                    <p class="text-gray-300">Visualize your progress with beautiful charts and stay motivated throughout your journey.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="glass py-16 px-6 rounded-2xl my-12 text-center">
+            <h2 class="text-3xl font-bold mb-4">Ready to Accelerate Your Exam Prep?</h2>
+            <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">Join thousands of students who are achieving their goals with PrepVerse's advanced study tools.</p>
+            <button class="glow-btn px-8 py-3 rounded-xl text-lg font-medium shadow-lg">Get Started Now</button>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass mt-12 py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                    <svg class="w-6 h-6 text-purple-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838l-2.727 1.17 1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"></path>
+                    </svg>
+                    <span class="font-bold">PrepVerse</span>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="hover:text-purple-400 transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-purple-400 transition-colors">Terms</a>
+                    <a href="#" class="hover:text-purple-400 transition-colors">Contact</a>
+                </div>
+            </div>
+            <div class="mt-4 text-center text-sm text-gray-400">
+                © 2025 PrepVerse. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Hide loading screen after content loads
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loading-screen').style.opacity = '0';
+                setTimeout(function() {
+                    document.getElementById('loading-screen').style.display = 'none';
+                }, 1000);
+            }, 1500);
+        });
+
+        // Three.js Planet
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up scene
+            const scene = new THREE.Scene();
+            const container = document.getElementById('planet-container');
+            const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+            
+            // Create planet
+            const geometry = new THREE.SphereGeometry(5, 64, 64);
+            
+            // Create custom shader material
+            const vertexShader = `
+                varying vec2 vUv;
+                varying vec3 vNormal;
+                
+                void main() {
+                    vUv = uv;
+                    vNormal = normalize(normalMatrix * normal);
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `;
+            
+            const fragmentShader = `
+                uniform float time;
+                varying vec2 vUv;
+                varying vec3 vNormal;
+                
+                void main() {
+                    // Gradient base color
+                    vec3 color1 = vec3(0.5, 0.2, 0.8); // Purple
+                    vec3 color2 = vec3(0.9, 0.3, 0.6); // Pink
+                    
+                    // Lighting effect
+                    float intensity = pow(0.7 - dot(vNormal, vec3(0, 0, 1.0)), 2.0);
+                    
+                    // Animate color bands
+                    float bands = sin((vUv.y * 20.0) + time) * 0.05;
+                    
+                    // Mix colors based on UV coordinates and time
+                    vec3 finalColor = mix(color1, color2, vUv.y + bands);
+                    
+                    // Add glow at edges
+                    finalColor += intensity * vec3(0.3, 0.2, 0.6);
+                    
+                    gl_FragColor = vec4(finalColor, 1.0);
+                }
+            `;
+            
+            const uniforms = {
+                time: { value: 0 }
+            };
+            
+            const material = new THREE.ShaderMaterial({
+                uniforms: uniforms,
+                vertexShader: vertexShader,
+                fragmentShader: fragmentShader,
+            });
+            
+            const planet = new THREE.Mesh(geometry, material);
+            scene.add(planet);
+            
+            // Add exam markers on the planet
+            const addExamMarker = (name, lat, long, color) => {
+                // Convert latitude and longitude to 3D position
+                const phi = (90 - lat) * (Math.PI / 180);
+                const theta = (long + 180) * (Math.PI / 180);
+                
+                const radius = 5.2; // Slightly larger than planet
+                const x = -radius * Math.sin(phi) * Math.cos(theta);
+                const y = radius * Math.cos(phi);
+                const z = radius * Math.sin(phi) * Math.sin(theta);
+                
+                // Create marker
+                const markerGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+                const markerMaterial = new THREE.MeshBasicMaterial({ color: color });
+                const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+                
+                marker.position.set(x, y, z);
+                marker.name = name;
+                scene.add(marker);
+                
+                return marker;
+            };
+            
+            // Add exam markers
+            const neetMarker = addExamMarker("NEET", 30, 20, 0xEC4899);
+            const jeeMarker = addExamMarker("JEE", -20, 80, 0x8B5CF6);
+            const iasMarker = addExamMarker("IAS", 60, -40, 0x10B981);
+            const gateMarker = addExamMarker("GATE", -40, -70, 0xF59E0B);
+            const placementsMarker = addExamMarker("Placements", 10, -120, 0x3B82F6);
+            
+            // Position camera
+            camera.position.z = 12;
+            
+            // Add light
+            const light = new THREE.PointLight(0xffffff, 1);
+            light.position.set(10, 10, 10);
+            scene.add(light);
+            
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+            scene.add(ambientLight);
+            
+            // Make it responsive
+            window.addEventListener('resize', function() {
+                camera.aspect = container.offsetWidth / container.offsetHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.offsetWidth, container.offsetHeight);
+            });
+            
+            // Animation loop
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetRotationX = 0;
+            let targetRotationY = 0;
+            
+            document.addEventListener('mousemove', function(event) {
+                mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            });
+            
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Update uniform time for shader animation
+                uniforms.time.value += 0.01;
+                
+                // Smooth rotation following mouse position with damping
+                targetRotationX += (mouseY * 0.5 - targetRotationX) * 0.05;
+                targetRotationY += (mouseX * 0.5 - targetRotationY) * 0.05;
+                
+                // Apply rotation
+                planet.rotation.x = targetRotationX;
+                planet.rotation.y += 0.005; // Constant rotation
+                planet.rotation.y += targetRotationY * 0.01; // Mouse-influenced rotation
+                
+                // Render
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // Interactive markers
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            
+            renderer.domElement.addEventListener('click', function(event) {
+                // Calculate mouse position in normalized device coordinates
+                mouse.x = ((event.clientX - container.getBoundingClientRect().left) / container.offsetWidth) * 2 - 1;
+                mouse.y = -((event.clientY - container.getBoundingClientRect().top) / container.offsetHeight) * 2 + 1;
+                
+                // Update the picking ray with the camera and mouse position
+                raycaster.setFromCamera(mouse, camera);
+                
+                // Calculate objects intersecting the picking ray
+                const intersects = raycaster.intersectObjects(scene.children);
+                
+                if (intersects.length > 0 && intersects[0].object.name) {
+                    const examName = intersects[0].object.name;
+                    alert(`You've selected ${examName}. Redirecting to ${examName} dashboard...`);
+                    // Here you would add code to navigate to specific exam pages
+                }
+            });
+        });
+    </script>
+</body>
+</html>

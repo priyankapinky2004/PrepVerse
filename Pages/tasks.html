@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepVerse - Task Management</title>
+    <link rel="stylesheet" href="tasks.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%238B5CF6'%3E%3Cpath fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z' clip-rule='evenodd'/%3E%3C/svg%3E" type="image/svg+xml">
+    <style>
+        /* Modern UI styles for Task Management */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary: #8B5CF6;
+    --primary-light: rgba(139, 92, 246, 0.2);
+    --secondary: #EC4899;
+    --secondary-light: rgba(236, 72, 153, 0.2);
+    --accent: #10B981;
+    --accent-light: rgba(16, 185, 129, 0.2);
+    --blue: #3B82F6;
+    --blue-light: rgba(59, 130, 246, 0.2);
+    --dark: #121212;
+    --card-bg: rgba(17, 25, 40, 0.75);
+    --glass-bg: rgba(17, 25, 40, 0.6);
+    --text: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --border: rgba(255, 255, 255, 0.1);
+    --red: #EF4444;
+    --yellow: #F59E0B;
+    --green: #10B981;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--dark);
+    background-image: 
+        radial-gradient(at 47% 33%, hsl(263, 90%, 32%) 0, transparent 59%), 
+        radial-gradient(at 82% 65%, hsl(330, 85%, 38%) 0, transparent 55%);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+}
+
+.tasks-container {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    transition: all 0.3s ease;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.icon {
+    width: 18px;
+    height: 18px;
+}
+
+.primary-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(139, 92, 246, 0.4);
+}
+
+.secondary-button {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.secondary-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Progress section */
+.progress-section {
+    margin-bottom: 24px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.progress-container {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    border-radius: 4px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    background-color: var(--green);
+}
+
+/* Filters */
+.filters-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding-bottom: 8px;
+}
+
+.filter-btn {
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text);
+}
+
+.filter-btn.active {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+/* Task list */
+.task-list {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-right: -10px;
+    padding-right: 10px;
+}
+
+.task-item {
+    display: flex;
+    align-items: flex-start;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+
+.task-item:hover {
+    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.task-checkbox {
+    margin-right: 12px;
+    margin-top: 3px;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.task-checkbox:checked {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.task-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd' /%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.task-content {
+    flex: 1;
+}
+
+.task-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+@media (min-width: 480px) {
+    .task-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.task-title {
+    font-weight: 500;
+    margin-right: 10px;
+    word-break: break-word;
+}
+
+.task-title.completed {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+}
+
+.task-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+@media (min-width: 480px) {
+    .task-badges {
+        margin-top: 0;
+    }
+}
+
+.task-badge {
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 500;
+}
+
+.task-subject {
+    background: rgba(59, 130, 246, 0.2);
+    color: var(--blue);
+}
+
+.priority-badge {
+    font-size: 0.65rem;
+    padding: 4px 8px;
+    border-radius: 20px;
+}
+
+.priority-high {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: var(--red);
+}
+
+.priority-medium {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: var(--yellow);
+}
+
+.priority-low {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: var(--green);
+}
+
+.task-due {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.task-due.overdue {
+    color: var(--red);
+}
+
+.task-due.today {
+    color: var(--yellow);
+}
+
+.task-actions {
+    margin-left: 12px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.task-item:hover .task-actions {
+    opacity: 1;
+}
+
+.delete-task {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.delete-task:hover {
+    color: var(--red);
+}
+
+/* Empty state */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    color: var(--text-secondary);
+}
+
+.empty-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    stroke: var(--text-secondary);
+}
+
+.empty-subtitle {
+    font-size: 0.85rem;
+    margin-top: 8px;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.close-button {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close-button:hover {
+    color: var(--text);
+}
+
+/* Form styles */
+form {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+}
+
+input[type="text"],
+input[type="datetime-local"],
+select {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="datetime-local"]:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.priority-options {
+    display: flex;
+    gap: 12px;
+}
+
+.priority-option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.priority-option input {
+    opacity: 0;
+    position: absolute;
+}
+
+.priority-label {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.priority-label.low {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--green);
+}
+
+.priority-label.medium {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--yellow);
+}
+
+.priority-label.high {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--red);
+}
+
+.priority-option input:checked + .priority-label.low {
+    background-color: rgba(16, 185, 129, 0.2);
+    box-shadow: 0 0 0 1px var(--green);
+}
+
+.priority-option input:checked + .priority-label.medium {
+    background-color: rgba(245, 158, 11, 0.2);
+    box-shadow: 0 0 0 1px var(--yellow);
+}
+
+.priority-option input:checked + .priority-label.high {
+    background-color: rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 0 1px var(--red);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+/* Helper classes */
+.hidden {
+    display: none;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tasks-container">
+            <div class="header">
+                <h2>Today's Tasks</h2>
+                <button id="add-task-btn" class="primary-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    Add Task
+                </button>
+            </div>
+            
+            <!-- Progress tracker -->
+            <div class="progress-section">
+                <div class="progress-header">
+                    <span id="task-counter">0 of 0 tasks completed</span>
+                    <span id="task-progress-percentage">0%</span>
+                </div>
+                <div class="progress-container">
+                    <div id="task-progress-bar" class="progress-bar"></div>
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div class="filters-container">
+                <button data-filter="all" class="filter-btn active">All</button>
+                <button data-filter="active" class="filter-btn">Pending</button>
+                <button data-filter="completed" class="filter-btn">Completed</button>
+                <button data-filter="high" class="filter-btn">High Priority</button>
+                <button data-filter="medium" class="filter-btn">Medium Priority</button>
+                <button data-filter="low" class="filter-btn">Low Priority</button>
+            </div>
+            
+            <!-- Task List -->
+            <div id="task-list" class="task-list"></div>
+            
+            <!-- Empty state -->
+            <div id="empty-state" class="empty-state hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="empty-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <p>No tasks found</p>
+                <p class="empty-subtitle">Click 'Add Task' to create your first task</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Task Modal -->
+    <div id="task-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Task</h3>
+                <button id="close-modal" class="close-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="add-task-form">
+                <div class="form-group">
+                    <label for="task-title">Task Title*</label>
+                    <input type="text" id="task-title" placeholder="Enter task title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-subject">Subject</label>
+                    <select id="task-subject">
+                        <option value="General">General</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Biology">Biology</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-due-date">Due Date & Time</label>
+                    <input type="datetime-local" id="task-due-date">
+                </div>
+                
+                <div class="form-group">
+                    <label>Priority</label>
+                    <div class="priority-options">
+                        <label class="priority-option">
+                            <input type="radio" name="task-priority" value="low">
+                            <span class="priority-label low">Low</span>
+                        </label>
+                        <label class="priority-option">
+                            <input type="radio" name="task-priority" value="medium" checked>
+                            <span class="priority-label medium">Medium</span>
+                        </label>
+                        <label class="priority-option">
+                            <input type="radio" name="task-priority" value="high">
+                            <span class="priority-label high">High</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" id="cancel-task" class="secondary-button">Cancel</button>
+                    <button type="submit" class="primary-button">Add Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="tasks.js"></script>
+</body>
+</html>

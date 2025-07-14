@@ -1,0 +1,1252 @@
+<body>
+    <!-- Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+    
+    <div class="flex h-screen bg-transparent">
+        <!-- Sidebar -->
+        <div class="sidebar glass w-64 p-4" id="sidebar">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-purple-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838l-2.727 1.17 1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"></path>
+                    </svg>
+                    <span class="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">PrepVerse</span>
+                </div>
+                <button id="close-sidebar" class="md:hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="space-y-1">
+                <a href="#" class="sidebar-link active">
+                    <i class="fas fa-home mr-3"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i class="fas fa-clock mr-3"></i>
+                    <span>Pomodoro Timer</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i class="fas fa-tasks mr-3"></i>
+                    <span>Tasks</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i class="fas fa-book mr-3"></i>
+                    <span>Subjects</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i class="fas fa-calendar-alt mr-3"></i>
+                    <span>Calendar</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i class="fas fa-chart-line mr-3"></i>
+                    <span>Progress</span>
+                </a>
+            </div>
+            
+            <div class="mt-auto pt-8">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm text-gray-400">Dark Mode</span>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="glass p-4 rounded-lg text-center">
+                    <p class="text-sm mb-2">Study Streak</p>
+                    <div class="flex justify-center space-x-1">
+                        <div class="w-4 h-4 rounded-full bg-purple-500"></div>
+                        <div class="w-4 h-4 rounded-full bg-purple-500"></div>
+                        <div class="w-4 h-4 rounded-full bg-purple-500"></div>
+                        <div class="w-4 h-4 rounded-full bg-purple-500"></div>
+                        <div class="w-4 h-4 rounded-full bg-purple-500"></div>
+                        <div class="w-4 h-4 rounded-full bg-gray-700"></div>
+                        <div class="w-4 h-4 rounded-full bg-gray-700"></div>
+                    </div>
+                    <p class="text-xs mt-2 text-gray-400">5 Day Streak! 🔥</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-y-auto">
+            <!-- Top Navigation -->
+            <nav class="p-4 flex justify-between items-center">
+                <button id="open-sidebar" class="md:hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                
+                <div class="ml-auto flex items-center space-x-4">
+                    <div class="glass px-4 py-2 rounded-full flex items-center space-x-2">
+                        <i class="fas fa-search text-gray-400"></i>
+                        <input type="text" placeholder="Search..." class="bg-transparent border-none focus:outline-none text-sm w-32">
+                    </div>
+                    
+                    <div class="relative">
+                        <button class="glass p-2 rounded-full">
+                            <i class="fas fa-bell"></i>
+                            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
+                    </div>
+                    
+                    <div class="glass p-1 rounded-full">
+                        <img src="/api/placeholder/36/36" alt="Profile" class="w-8 h-8 rounded-full">
+                    </div>
+                </div>
+            </nav>
+            
+            <!-- Dashboard Content -->
+            <div class="p-4">
+                <div class="mb-6">
+                    <h1 class="text-2xl font-bold mb-2">Welcome back, Arjun!</h1>
+                    <p class="text-gray-400">Let's continue your preparation journey.</p>
+                </div>
+                
+                <!-- Metrics Row -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <!-- Study Hours -->
+                    <div class="card p-4 fade-in opacity-0">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm">Total Study Hours</p>
+                                <h3 class="text-2xl font-bold">42.5h</h3>
+                                <span class="text-green-500 text-xs">+2.5h today</span>
+                            </div>
+                            <div class="glass p-3 rounded-full">
+                                <i class="fas fa-clock text-purple-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tasks Completed -->
+                    <div class="card p-4 fade-in opacity-0 delay-100">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm">Tasks Completed</p>
+                                <h3 class="text-2xl font-bold">18/25</h3>
+                                <span class="text-yellow-500 text-xs">72% completion</span>
+                            </div>
+                            <div class="glass p-3 rounded-full">
+                                <i class="fas fa-tasks text-pink-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Focus Score -->
+                    <div class="card p-4 fade-in opacity-0 delay-200">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm">Focus Score</p>
+                                <h3 class="text-2xl font-bold">85%</h3>
+                                <span class="text-green-500 text-xs">+5% this week</span>
+                            </div>
+                            <div class="glass p-3 rounded-full">
+                                <i class="fas fa-bullseye text-green-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Tests -->
+                    <div class="card p-4 fade-in opacity-0 delay-300">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm">Upcoming Tests</p>
+                                <h3 class="text-2xl font-bold">3</h3>
+                                <span class="text-red-500 text-xs">Next in 2 days</span>
+                            </div>
+                            <div class="glass p-3 rounded-full">
+                                <i class="fas fa-file-alt text-blue-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Two Column Layout -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left Column (2/3 width) -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Pomodoro Timer -->
+                        <div class="card p-6 fade-in opacity-0 delay-100">
+                            <h2 class="text-xl font-semibold mb-4">Pomodoro Timer</h2>
+                            <div class="flex items-center justify-center">
+                                <div class="timer-display font-mono" id="timer-display">25:00</div>
+                            </div>
+                            <div class="flex justify-center space-x-4 timer-controls mb-4">
+                                <button id="timer-restart" title="Restart">
+                                    <i class="fas fa-redo-alt"></i>
+                                </button>
+                                <button id="timer-start" class="start" title="Start/Pause">
+                                    <i class="fas fa-play" id="play-icon"></i>
+                                </button>
+                                <button id="timer-skip" title="Skip">
+                                    <i class="fas fa-forward"></i>
+                                </button>
+                            </div>
+                            <div class="flex justify-center space-x-4">
+                                <button class="glass px-4 py-2 rounded-lg text-sm" id="pomo-mode-focus">Focus</button>
+                                <button class="glass px-4 py-2 rounded-lg text-sm" id="pomo-mode-short">Short Break</button>
+                                <button class="glass px-4 py-2 rounded-lg text-sm" id="pomo-mode-long">Long Break</button>
+                            </div>
+                            <div class="mt-4">
+                                <label class="text-sm text-gray-400 mb-1 block">Current Task</label>
+                                <input type="text" placeholder="What are you working on?" class="w-full bg-transparent border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-purple-500">
+                            </div>
+                        </div>
+                        
+                        <!-- Timetable Planner -->
+                        <div class="card p-6 fade-in opacity-0 delay-200">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-semibold">Weekly Schedule</h2>
+                                <button class="glass px-4 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-plus mr-2"></i> Add Event
+                                </button>
+                            </div>
+                            
+                            <!-- Timetable Grid -->
+                            <div class="overflow-x-auto">
+                                <div class="timetable-grid min-w-max">
+                                    <!-- Headers -->
+                                    <div class="timetable-header"></div>
+                                    <div class="timetable-header">Mon</div>
+                                    <div class="timetable-header">Tue</div>
+                                    <div class="timetable-header">Wed</div>
+                                    <div class="timetable-header">Thu</div>
+                                    <div class="timetable-header">Fri</div>
+                                    <div class="timetable-header">Sat</div>
+                                    <div class="timetable-header">Sun</div>
+                                    
+                                    <!-- Time slots -->
+                                    <div class="timetable-time">8:00</div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    
+                                    <div class="timetable-time">9:00</div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell">
+                                        <div class="timetable-event" style="background-color: rgba(139, 92, 246, 0.3);">Math</div>
+                                    </div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell">
+                                        <div class="timetable-event" style="background-color: rgba(139, 92, 246, 0.3);">Math</div>
+                                    </div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    
+                                    <div class="timetable-time">10:00</div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell">
+                                        <div class="timetable-event" style="background-color: rgba(236, 72, 153, 0.3);">Physics</div>
+                                    </div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell">
+                                        <div class="timetable-event" style="background-color: rgba(236, 72, 153, 0.3);">Physics</div>
+                                    </div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    
+                                    <div class="timetable-time">11:00</div>
+                                    <div class="timetable-cell">
+                                        <div class="timetable-event" style="background-color: rgba(16, 185, 129, 0.3);">Chemistry</div>
+                                    </div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell">
+                                        <div class="timetable-event" style="background-color: rgba(16, 185, 129, 0.3);">Chemistry</div>
+                                    </div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell">
+                                        <div class="timetable-event" style="background-color: rgba(16, 185, 129, 0.3);">Chemistry</div>
+                                    </div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    
+                                    <div class="timetable-time">12:00</div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                    <div class="timetable-cell"></div>
+                                </div>
+                            </div>
+                            
+                            <p class="text-xs text-gray-400 mt-3">Drag and drop to adjust your schedule. Click on any cell to add a new study block.</p>
+                        </div>
+                        
+                        <!-- Subject Tracker -->
+                        <div class="card p-6 fade-in opacity-0 delay-300">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-semibold">Subject Progress</h2>
+                                <button class="glass px-4 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-plus mr-2"></i> Add Subject
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <!-- Subject 1 -->
+                                <div class="subject-card card p-4" style="border-left-color: #8B5CF6;">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-semibold">Mathematics</h3>
+                                            <div class="flex mt-1 items-center">
+                                                <div class="text-xs text-gray-400 mr-2">Progress:</div>
+                                                <div class="progress-container flex-1">
+                                                    <div class="progress-bar" style="width: 78%;"></div>
+                                                </div>
+                                                <div class="text-xs ml-2">78%</div>
+                                            </div>
+                                        </div>
+                                        <span class="text-xs bg-purple-900 bg-opacity-40 text-purple-300 py-1 px-2 rounded">18h spent</span>
+                                    </div>
+                                    <div class="mt-2 text-sm">
+                                        <div class="flex justify-between">
+                                            <div>Next revision: <span class="text-purple-400">Today</span></div>
+                                            <div>
+                                                <button class="text-gray-400 hover:text-white transition-colors">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Subject 2 -->
+                                <div class="subject-card card p-4" style="border-left-color: #EC4899;">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-semibold">Physics</h3>
+                                            <div class="flex mt-1 items-center">
+                                                <div class="text-xs text-gray-400 mr-2">Progress:</div>
+                                                <div class="progress-container flex-1">
+                                                    <div class="progress-bar" style="width: 65%;"></div>
+                                                </div>
+                                                <div class="text-xs ml-2">65%</div>
+                                            </div>
+                                        </div>
+                                        <span class="text-xs bg-pink-900 bg-opacity-40 text-pink-300 py-1 px-2 rounded">12h spent</span>
+                                    </div>
+                                    <div class="mt-2 text-sm">
+                                        <div class="flex justify-between">
+                                            <div>Next revision: <span class="text-purple-400">Tomorrow</span></div>
+                                            <div>
+                                                <button class="text-gray-400 hover:text-white transition-colors">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Subject 3 -->
+                                <div class="subject-card card p-4" style="border-left-color: #10B981;">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-semibold">Chemistry</h3>
+                                            <div class="flex mt-1 items-center">
+                                                <div class="text-xs text-gray-400 mr-2">Progress:</div>
+                                                <div class="progress-container flex-1">
+                                                    <div class="progress-bar" style="width: 42%;"></div>
+                                                </div>
+                                                <div class="text-xs ml-2">42%</div>
+                                            </div>
+                                        </div>
+                                        <span class="text-xs bg-green-900 bg-opacity-40 text-green-300 py-1 px-2 rounded">8h spent</span>
+                                    </div>
+                                    <div class="mt-2 text-sm">
+                                        <div class="flex justify-between">
+                                            <div>Next revision: <span class="text-purple-400">In 3 days</span></div>
+                                            <div>
+                                                <button class="text-gray-400 hover:text-white transition-colors">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column (1/3 width) -->
+                    <div class="space-y-6">
+                        <!-- Daily Goals & To-Do -->
+                        <div class="card p-6 fade-in opacity-0 delay-100">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-semibold">Today's Tasks</h2>
+                                <button class="glass px-4 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-plus mr-2"></i> Add Task
+                                </button>
+                            </div>
+                            
+                            <div class="flex mb-4">
+                                <button class="glass px-3 py-1 rounded-lg text-xs mr-2 bg-opacity-20 bg-purple-500">All</button>
+                                <button class="glass px-3 py-1 rounded-lg text-xs mr-2">High</button>
+                                <button class="glass px-3 py-1 rounded-lg text-xs mr-2">Medium</button>
+                                <button class="glass px-3 py-1 rounded-lg text-xs">Low</button>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <!-- Task 1 -->
+                                <div class="task-item glass p-3 rounded-lg flex items-center">
+                                    <input type="checkbox" class="mr-3">
+                                    <div class="flex-1">
+                                        <p>Complete Physics assignment</p>
+                                        <p class="text-xs text-gray-400">Due 2:00 PM</p>
+                                    </div>
+                                    <span class="priority-badge priority-high">High</span>
+                                </div>
+                                
+                                <!-- Task 2 -->
+                                <div class="task-item glass p-3 rounded-lg flex items-center">
+                                    <input type="checkbox" class="mr-3">
+                                    <div class="flex-1">
+                                        <p>Revise Math formulas</p>
+                                        <p class="text-xs text-gray-400">Due 5:00 PM</p>
+                                    </div>
+                                    <span class="priority-badge priority-medium">Medium</span>
+                                </div>
+                                
+                                <!-- Task 3 -->
+                                <div class="task-item glass p-3 rounded-lg flex items-center">
+                                    <input type="checkbox" class="mr-3" checked>
+                                    <div class="flex-1">
+                                        <p class="line-through text-gray-500">Update study notes</p>
+                                        <p class="text-xs text-gray-400">Completed</p>
+                                    </div>
+                                    <span class="priority-badge priority-low">Low</span>
+                                </div>
+                                
+                                <!-- Task 4 -->
+                                <div class="task-item glass p-3 rounded-lg flex items-center">
+                                    <input type="checkbox" class="mr-3">
+                                    <div class="flex-1">
+                                        <p>Practice NEET sample questions</p>
+                                        <p class="text-xs text-gray-400">Due 8:00 PM</p>
+                                    </div>
+                                    <span class="priority-badge priority-high">High</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 text-center">
+                                <span class="text-sm text-gray-400">2 of 4 tasks completed</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Revision Calendar -->
+                        <div class="card p-6 fade-in opacity-0 delay-200">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-semibold">Revision Calendar</h2>
+                                <div class="flex space-x-2">
+                                    <button class="glass p-2 rounded-lg">
+                                        <i class="fas fa-chevron-left text-xs"></i>
+                                    </button>
+                                    <button class="glass p-2 rounded-lg">
+                                        <i class="fas fa-chevron-right text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mb-4">
+                                <h3 class="text-lg">May 2025</h3>
+                            </div>
+                            
+                            <!-- Calendar Days Header -->
+                            <div class="calendar-grid mb-2">
+                                <div class="text-center text-xs text-gray-400">Su</div>
+                                <div class="text-center text-xs text-gray-400">Mo</div>
+                                <div class="text-center text-xs text-gray-400">Tu</div>
+                                <div class="text-center text-xs text-gray-400">We</div>
+                                <div class="text-center text-xs text-gray-400">Th</div>
+                                <div class="text-center text-xs text-gray-400">Fr</div>
+                                <div class="text-center text-xs text-gray-400">Sa</div>
+                            </div>
+                            
+                            <!-- Calendar Days -->
+                            <div class="calendar-grid">
+                                <!-- Week 1 -->
+                                <div class="calendar-day text-gray-600">28</div>
+                                <div class="calendar-day text-gray-600">29</div>
+                                <div class="calendar-day text-gray-600">30</div>
+                                <div class="calendar-day">1</div>
+                                <div class="calendar-day">2</div>
+                                <div class="calendar-day has-events">3</div>
+                                <div class="calendar-day">4</div>
+                                
+                                <!-- Week 2 -->
+                                <div class="calendar-day active">5</div>
+                                <div class="calendar-day has-events">6</div>
+                                <div class="calendar-day">7</div>
+                                <div class="calendar-day has-events">8</div>
+                                <div class="calendar-day">9</div>
+                                <div class="calendar-day">10</div>
+                                <div class="calendar-day">11</div>
+                                
+                                <!-- Week 3 -->
+                                <div class="calendar-day">12</div>
+                                <div class="calendar-day has-events">13</div>
+                                <div class="calendar-day">14</div>
+                                <div class="calendar-day">15</div>
+                                <div class="calendar-day has-events">16</div>
+                                <div class="calendar-day">17</div>
+                                <div class="calendar-day">18</div>
+                                
+                                <!-- Week 4 -->
+                                <div class="calendar-day">19</div>
+                                <div class="calendar-day">20</div>
+                                <div class="calendar-day has-events">21</div>
+                                <div class="calendar-day">22</div>
+                                <div class="calendar-day">23</div>
+                                <div class="calendar-day has-events">24</div>
+                                <div class="calendar-day">25</div>
+                                
+                                <!-- Week 5 -->
+                                <div class="calendar-day">26</div>
+                                <div class="calendar-day">27</div>
+                                <div class="calendar-day">28</div>
+                                <div class="calendar-day has-events">29</div>
+                                <div class="calendar-day">30</div>
+                                <div class="calendar-day">31</div>
+                                <div class="calendar-day text-gray-600">1</div>
+                            </div>
+                            
+                            <div class="mt-4 glass p-3 rounded-lg">
+                                <h4 class="text-sm font-semibold mb-2">Today - May 5, 2025</h4>
+                                <div class="space-y-2">
+                                    <div class="flex items-center text-xs">
+                                        <span class="w-2 h-2 rounded-full bg-purple-500 mr-2"></span>
+                                        <span>Math Revision - 9:00 AM</span>
+                                    </div>
+                                    <div class="flex items-center text-xs">
+                                        <span class="w-2 h-2 rounded-full bg-pink-500 mr-2"></span>
+                                        <span>Physics Test - 2:00 PM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Study Stats -->
+                        <div class="card p-6 fade-in opacity-0 delay-300">
+                            <h2 class="text-xl font-semibold mb-4">Weekly Performance</h2>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Study Consistency</span>
+                                        <span>85%</span>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: 85%;"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Task Completion</span>
+                                        <span>72%</span>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: 72%;"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Focus Time</span>
+                                        <span>92%</span>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: 92%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <button class="glass px-4 py-2 rounded-lg text-sm">View Detailed Report</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript for functionality -->
+    <script>
+        // Sidebar Toggle
+        document.getElementById('open-sidebar').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.add('open');
+        });
+        
+        document.getElementById('close-sidebar').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.remove('open');
+        });
+        
+        // Animation on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(element => {
+                setTimeout(() => {
+                    element.classList.remove('opacity-0');
+                }, 100);
+            });
+        });
+        
+        // Pomodoro Timer
+        const timerDisplay = document.getElementById('timer-display');
+        const startButton = document.getElementById('timer-start');
+        const restartButton = document.getElementById('timer-restart');
+        const skipButton = document.getElementById('timer-skip');
+        const playIcon = document.getElementById('play-icon');
+        
+        let timerInterval;
+        let minutes = 25;
+        let seconds = 0;
+        let isRunning = false;
+        let currentMode = 'focus';
+        
+        // Mode buttons
+        document.getElementById('pomo-mode-focus').addEventListener('click', () => setTimerMode('focus'));
+        document.getElementById('pomo-mode-short').addEventListener('click', () => setTimerMode('short'));
+        document.getElementById('pomo-mode-long').addEventListener('click', () => setTimerMode('long'));
+        
+        function setTimerMode(mode) {
+            currentMode = mode;
+            clearInterval(timerInterval);
+            isRunning = false;
+            playIcon.classList.remove('fa-pause');
+            playIcon.classList.add('fa-play');
+            
+            switch(mode) {
+                case 'focus':
+                    minutes = 25;
+                    seconds = 0;
+                    break;
+                case 'short':
+                    minutes = 5;
+                    seconds = 0;
+                    break;
+                case 'long':
+                    minutes = 15;
+                    seconds = 0;
+                    break;
+            }
+            
+            updateTimerDisplay();
+            
+            // Visual feedback for mode selection
+            document.getElementById('pomo-mode-focus').classList.remove('bg-purple-500', 'bg-opacity-30');
+            document.getElementById('pomo-mode-short').classList.remove('bg-purple-500', 'bg-opacity-30');
+            document.getElementById('pomo-mode-long').classList.remove('bg-purple-500', 'bg-opacity-30');
+            
+            document.getElementById(`pomo-mode-${mode}`).classList.add('bg-purple-500', 'bg-opacity-30');
+        }
+        
+        function updateTimerDisplay() {
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function startTimer() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                playIcon.classList.remove('fa-pause');
+                playIcon.classList.add('fa-play');
+                return;
+            }
+            
+            isRunning = true;
+            playIcon.classList.remove('fa-play');
+            playIcon.classList.add('fa-pause');
+            
+            timerInterval = setInterval(() => {
+                if (seconds === 0) {
+                    if (minutes === 0) {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        playIcon.classList.remove('fa-pause');
+                        playIcon.classList.add('fa-play');
+                        
+                        // Play notification sound
+                        const audio = new Audio();
+                        audio.src = "https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3";
+                        audio.play();
+                        
+                        return;
+                    }
+                    minutes--;
+                    seconds = 59;
+                } else {
+                    seconds--;
+                }
+                updateTimerDisplay();
+            }, 1000);
+        }
+        
+        function restartTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            playIcon.classList.remove('fa-pause');
+            playIcon.classList.add('fa-play');
+            
+            // Reset to current mode's default time
+            setTimerMode(currentMode);
+        }
+        
+        startButton.addEventListener('click', startTimer);
+        restartButton.addEventListener('click', restartTimer);
+        skipButton.addEventListener('click', () => {
+            if (currentMode === 'focus') {
+                setTimerMode('short');
+            } else if (currentMode === 'short' || currentMode === 'long') {
+                setTimerMode('focus');
+            }
+        });
+        
+        // Initialize timer display
+        updateTimerDisplay();
+        setTimerMode('focus');
+        
+        // 3D Background Animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('bg-canvas');
+            const renderer = new THREE.WebGLRenderer({
+                canvas: canvas,
+                antialias: true,
+                alpha: true
+            });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            
+            const scene = new THREE.Scene();
+            
+            // Camera setup
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 15;
+            
+            // Create particles
+            const particles = [];
+            const particleCount = 50;
+            
+            function createParticle() {
+                const geometry = new THREE.SphereGeometry(0.05 + Math.random() * 0.1, 8, 8);
+                const material = new THREE.MeshBasicMaterial({
+                    color: new THREE.Color(
+                        Math.random() * 0.3 + 0.7, // Mostly purple
+                        Math.random() * 0.3,
+                        Math.random() * 0.5 + 0.5
+                    ),
+                    transparent: true,
+                    opacity: Math.random() * 0.5 + 0.25
+                });
+                
+                const particle = new THREE.Mesh(geometry, material);
+                
+                // Random position within a sphere
+                const radius = 10 + Math.random() * 5;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.random() * Math.PI;
+                
+                particle.position.x = radius * Math.sin(phi) * Math.cos(theta);
+                particle.position.y = radius * Math.sin(phi) * Math.sin(theta);
+                particle.position.z = radius * Math.cos(phi);
+                
+                // Random velocity
+                particle.velocity = {
+                    x: (Math.random() - 0.5) * 0.01,
+                    y: (Math.random() - 0.5) * 0.01,
+                    z: (Math.random() - 0.5) * 0.01
+                };
+                
+                particle.initialScale = 0.5 + Math.random() * 1.5;
+                particle.scale.set(particle.initialScale, particle.initialScale, particle.initialScale);
+                
+                scene.add(particle);
+                particles.push(particle);
+                
+                return particle;
+            }
+            
+            // Create initial particles
+            for (let i = 0; i < particleCount; i++) {
+                createParticle();
+            }
+            
+            // Create connecting lines
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0x8B5CF6,
+                transparent: true,
+                opacity: 0.1
+            });
+            
+            const lines = [];
+            
+            function updateLines() {
+                // Remove old lines
+                for (let i = 0; i < lines.length; i++) {
+                    scene.remove(lines[i]);
+                }
+                lines.length = 0;
+                
+                // Create new lines between nearby particles
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const p1 = particles[i];
+                                                        const p2 = particles[j];
+                        
+                        const distance = p1.position.distanceTo(p2.position);
+                        
+                        if (distance < 5) {
+                            const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+                                p1.position,
+                                p2.position
+                            ]);
+                            
+                            const line = new THREE.Line(lineGeometry, lineMaterial);
+                            scene.add(line);
+                            lines.push(line);
+                            
+                            // Adjust opacity based on distance
+                            line.material = new THREE.LineBasicMaterial({
+                                color: 0x8B5CF6,
+                                transparent: true,
+                                opacity: 0.1 * (1 - distance / 5)
+                            });
+                        }
+                    }
+                }
+            }
+            
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Update particle positions
+                for (let i = 0; i < particles.length; i++) {
+                    const particle = particles[i];
+                    
+                    particle.position.x += particle.velocity.x;
+                    particle.position.y += particle.velocity.y;
+                    particle.position.z += particle.velocity.z;
+                    
+                    // Pulsate size
+                    const scale = particle.initialScale * (1 + 0.1 * Math.sin(Date.now() * 0.001 + i));
+                    particle.scale.set(scale, scale, scale);
+                    
+                    // Boundary check and bounce
+                    if (Math.abs(particle.position.x) > 15) {
+                        particle.velocity.x *= -1;
+                    }
+                    if (Math.abs(particle.position.y) > 10) {
+                        particle.velocity.y *= -1;
+                    }
+                    if (Math.abs(particle.position.z) > 10) {
+                        particle.velocity.z *= -1;
+                    }
+                }
+                
+                // Update connecting lines periodically to avoid performance issues
+                if (Math.random() < 0.05) {
+                    updateLines();
+                }
+                
+                renderer.render(scene, camera);
+            }
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+            
+            // Start animation
+            animate();
+        });
+        
+        // Make timetable cells interactive
+        document.addEventListener('DOMContentLoaded', function() {
+            const timetableCells = document.querySelectorAll('.timetable-cell');
+            
+            timetableCells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    if (!cell.querySelector('.timetable-event')) {
+                        const subject = prompt('Enter subject name:');
+                        if (subject) {
+                            const colors = [
+                                'rgba(139, 92, 246, 0.3)',  // Purple
+                                'rgba(236, 72, 153, 0.3)',  // Pink
+                                'rgba(16, 185, 129, 0.3)',  // Green
+                                'rgba(245, 158, 11, 0.3)'   // Amber
+                            ];
+                            
+                            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                            
+                            const event = document.createElement('div');
+                            event.className = 'timetable-event';
+                            event.textContent = subject;
+                            event.style.backgroundColor = randomColor;
+                            
+                            cell.appendChild(event);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+            <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepVerse - Study Command Center</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        :root {
+            --primary: #8B5CF6;
+            --secondary: #EC4899;
+            --accent: #10B981;
+            --dark: #121212;
+            --card-bg: rgba(17, 25, 40, 0.75);
+            --glass-bg: rgba(17, 25, 40, 0.6);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark);
+            background-image: 
+                radial-gradient(at 47% 33%, hsl(263, 90%, 32%) 0, transparent 59%), 
+                radial-gradient(at 82% 65%, hsl(330, 85%, 38%) 0, transparent 55%);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(7px);
+            -webkit-backdrop-filter: blur(7px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar {
+            height: calc(100vh - 0px);
+            transition: all 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 40;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-link.active {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        /* Progress bars */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Pomodoro Timer */
+        .timer-display {
+            font-size: 4rem;
+            font-weight: 300;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .timer-controls button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .timer-controls button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .timer-controls button.start {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+        }
+        
+        .timer-controls button.start:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Task styles */
+        .task-item {
+            transition: all 0.3s ease;
+        }
+        
+        .task-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .priority-badge {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+        }
+        
+        .priority-high {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .priority-medium {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        
+        .priority-low {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        /* Calendar Styles */
+        .calendar {
+            width: 100%;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.25rem;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1/1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .calendar-day:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .calendar-day.active {
+            background: rgba(139, 92, 246, 0.3);
+            border: 1px solid var(--primary);
+        }
+        
+        .calendar-day.has-events::after {
+            content: '';
+            width: 5px;
+            height: 5px;
+            background: var(--secondary);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 3px;
+        }
+        
+        /* Subject tracker */
+        .subject-card {
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .subject-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Timetable Styles */
+        .timetable-grid {
+            display: grid;
+            grid-template-columns: 60px repeat(7, 1fr);
+            gap: 1px;
+        }
+        
+        .timetable-header {
+            text-align: center;
+            padding: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .timetable-time {
+            grid-column: 1;
+            padding: 0.5rem;
+            text-align: right;
+            font-size: 0.8rem;
+        }
+        
+        .timetable-cell {
+            padding: 0.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            min-height: 2.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .timetable-cell:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .timetable-event {
+            background: rgba(139, 92, 246, 0.3);
+            border-radius: 4px;
+            padding: 0.25rem;
+            font-size: 0.8rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        
+        /* Custom Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* 3D Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }

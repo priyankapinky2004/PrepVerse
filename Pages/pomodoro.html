@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepVerse - Pomodoro Timer</title>
+    <link rel="stylesheet" href="pomodoro.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%238B5CF6'%3E%3Cpath fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z' clip-rule='evenodd' /%3E%3C/svg%3E" type="image/svg+xml">
+    <style>
+        /* Modern UI styles for Pomodoro Timer */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+    --primary: #8B5CF6;
+    --primary-light: rgba(139, 92, 246, 0.2);
+    --secondary: #EC4899;
+    --secondary-light: rgba(236, 72, 153, 0.2);
+    --accent: #10B981;
+    --accent-light: rgba(16, 185, 129, 0.2);
+    --blue: #3B82F6;
+    --blue-light: rgba(59, 130, 246, 0.2);
+    --dark: #121212;
+    --card-bg: rgba(17, 25, 40, 0.75);
+    --glass-bg: rgba(17, 25, 40, 0.6);
+    --text: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--dark);
+    background-image: 
+        radial-gradient(at 47% 33%, hsl(263, 90%, 32%) 0, transparent 59%), 
+        radial-gradient(at 82% 65%, hsl(330, 85%, 38%) 0, transparent 55%);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+}
+
+.pomodoro-container {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    transition: all 0.3s ease;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.session-badge {
+    background-color: var(--primary-light);
+    color: var(--primary);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.timer-display {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.timer-display svg {
+    width: 220px;
+    height: 220px;
+}
+
+.timer-controls {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.control-button {
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text);
+    transition: all 0.2s ease;
+}
+
+.control-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.control-button.main-button {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
+}
+
+.control-button.main-button:hover {
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+}
+
+.control-button.main-button.active {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5);
+}
+
+.control-button.main-button.active:hover {
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+}
+
+.icon {
+    width: 22px;
+    height: 22px;
+}
+
+.main-button .icon {
+    width: 28px;
+    height: 28px;
+}
+
+.mode-selector {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 4px;
+}
+
+.mode-button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.mode-button:hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.mode-button.active {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.mode-button.active.focus {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.mode-button.active.short {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+.mode-button.active.long {
+    background: var(--blue-light);
+    color: var(--blue);
+}
+
+.task-input {
+    margin-bottom: 24px;
+}
+
+.task-label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.task-field {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.task-field:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.task-field::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.task-field:disabled {
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.4);
+    cursor: not-allowed;
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.stat-box {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.stat-label {
+    font-size: 0.825rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Task History Section */
+.task-history {
+    margin-top: 24px;
+}
+
+.task-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.task-history-header h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.task-history-list {
+    max-height: 150px;
+    overflow-y: auto;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 8px;
+}
+
+.task-history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.task-history-item:last-child {
+    margin-bottom: 0;
+}
+
+.task-history-info {
+    display: flex;
+    align-items: center;
+}
+
+.task-type-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.task-type-indicator.focus {
+    background-color: var(--primary);
+}
+
+.task-history-name {
+    font-size: 0.875rem;
+}
+
+.task-history-time {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Notification container */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    background: rgba(16, 185, 129, 0.9);
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification-icon {
+    margin-right: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 500px) {
+    .pomodoro-container {
+        padding: 20px;
+    }
+    
+    .timer-display svg {
+        width: 180px;
+        height: 180px;
+    }
+    
+    .control-button {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .control-button.main-button {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .stat-value {
+        font-size: 1.25rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="pomodoro-container">
+            <!-- Hidden audio element -->
+            <audio id="timer-end-sound" preload="auto">
+                <source src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" type="audio/mpeg">
+            </audio>
+            
+            <div class="header">
+                <h2>Pomodoro Timer</h2>
+                <div class="session-badge">
+                    <span id="sessions-count">0</span> sessions today
+                </div>
+            </div>
+            
+            <!-- Progress ring -->
+            <div class="timer-display">
+                <svg viewBox="0 0 100 100">
+                    <!-- Background circle -->
+                    <circle 
+                        cx="50" 
+                        cy="50" 
+                        r="45" 
+                        fill="transparent" 
+                        stroke="rgba(255,255,255,0.1)" 
+                        stroke-width="8" 
+                    ></circle>
+                    
+                    <!-- Progress circle -->
+                    <circle 
+                        id="progress-ring"
+                        cx="50" 
+                        cy="50" 
+                        r="45" 
+                        fill="transparent" 
+                        stroke="rgba(139, 92, 246, 0.8)"
+                        stroke-width="8" 
+                        stroke-linecap="round" 
+                        stroke-dasharray="283" 
+                        stroke-dashoffset="0" 
+                        transform="rotate(-90 50 50)" 
+                    ></circle>
+                    
+                    <!-- Timer text -->
+                    <text 
+                        id="timer-text"
+                        x="50" 
+                        y="50" 
+                        font-family="monospace" 
+                        font-size="20" 
+                        text-anchor="middle" 
+                        dominant-baseline="middle" 
+                        fill="white" 
+                        font-weight="bold"
+                    >
+                        25:00
+                    </text>
+                    
+                    <!-- Mode text -->
+                    <text 
+                        id="mode-text"
+                        x="50" 
+                        y="65" 
+                        font-family="sans-serif" 
+                        font-size="10" 
+                        text-anchor="middle" 
+                        fill="rgba(255,255,255,0.7)"
+                    >
+                        FOCUS TIME
+                    </text>
+                </svg>
+            </div>
+            
+            <!-- Control buttons -->
+            <div class="timer-controls">
+                <!-- Reset button -->
+                <button 
+                    id="reset-button"
+                    class="control-button"
+                    aria-label="Reset timer"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                
+                <!-- Start/Pause button -->
+                <button 
+                    id="toggle-button"
+                    class="control-button main-button"
+                    aria-label="Start timer"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 20 20" fill="currentColor" id="play-pause-icon">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                
+                <!-- Skip button -->
+                <button 
+                    id="skip-button"
+                    class="control-button"
+                    aria-label="Skip to next timer"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7.555 14.832A1 1 0 006 14V6a1 1 0 011.555-.832l6 4a1 1 0 010 1.664l-6 4z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Mode selection -->
+            <div class="mode-selector">
+                <button id="focus-mode" class="mode-button active focus">Focus</button>
+                <button id="short-break-mode" class="mode-button">Short Break</button>
+                <button id="long-break-mode" class="mode-button">Long Break</button>
+            </div>
+            
+            <!-- Current task input -->
+            <div class="task-input">
+                <label for="current-task" class="task-label">What are you working on?</label>
+                <input 
+                    type="text" 
+                    id="current-task"
+                    placeholder="Enter your task here..."
+                    class="task-field"
+                />
+            </div>
+            
+            <!-- Stats -->
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-label">Sessions</div>
+                    <div id="completed-sessions" class="stat-value">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Time Focused</div>
+                    <div id="time-spent" class="stat-value">0h 0m</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // DOM Elements
+    const timerText = document.getElementById('timer-text');
+    const modeText = document.getElementById('mode-text');
+    const progressRing = document.getElementById('progress-ring');
+    const toggleButton = document.getElementById('toggle-button');
+    const resetButton = document.getElementById('reset-button');
+    const skipButton = document.getElementById('skip-button');
+    const focusModeBtn = document.getElementById('focus-mode');
+    const shortBreakModeBtn = document.getElementById('short-break-mode');
+    const longBreakModeBtn = document.getElementById('long-break-mode');
+    const currentTaskInput = document.getElementById('current-task');
+    const sessionsCountDisplay = document.getElementById('sessions-count');
+    const completedSessionsDisplay = document.getElementById('completed-sessions');
+    const timeSpentDisplay = document.getElementById('time-spent');
+    const timerEndSound = document.getElementById('timer-end-sound');
+    const playPauseIcon = document.getElementById('play-pause-icon');
+    
+    // Timer state
+    let minutes = 25;
+    let seconds = 0;
+    let isRunning = false;
+    let timerInterval;
+    let currentMode = 'focus';
+    let completedSessions = 0;
+    let timeSpent = 0; // in seconds
+    let taskHistory = [];
+    
+    // Timer configuration
+    const timerConfig = {
+        focus: { minutes: 25, seconds: 0 },
+        shortBreak: { minutes: 5, seconds: 0 },
+        longBreak: { minutes: 15, seconds: 0 }
+    };
+    
+    // Apply classes based on mode
+    function updateModeUI() {
+        // Remove all active classes
+        focusModeBtn.classList.remove('active', 'focus');
+        shortBreakModeBtn.classList.remove('active', 'short');
+        longBreakModeBtn.classList.remove('active', 'long');
+        
+        // Add appropriate classes
+        if (currentMode === 'focus') {
+            focusModeBtn.classList.add('active', 'focus');
+            progressRing.setAttribute('stroke', 'rgba(139, 92, 246, 0.8)');
+            modeText.textContent = 'FOCUS TIME';
+        } else if (currentMode === 'shortBreak') {
+            shortBreakModeBtn.classList.add('active', 'short');
+            progressRing.setAttribute('stroke', 'rgba(16, 185, 129, 0.8)');
+            modeText.textContent = 'SHORT BREAK';
+        } else {
+            longBreakModeBtn.classList.add('active', 'long');
+            progressRing.setAttribute('stroke', 'rgba(59, 130, 246, 0.8)');
+            modeText.textContent = 'LONG BREAK';
+        }
+        
+        // Enable/disable task input
+        currentTaskInput.disabled = currentMode !== 'focus';
+        if (currentMode !== 'focus') {
+            currentTaskInput.placeholder = "Taking a break...";
+        } else {
+            currentTaskInput.placeholder = "Enter your task here...";
+        }
+    }
+    
+    // Format time as MM:SS
+    function formatTime(min, sec) {
+        return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    }
+    
+    // Update timer display
+    function updateTimerDisplay() {
+        timerText.textContent = formatTime(minutes, seconds);
+        updateProgressRing();
+    }
+    
+    // Calculate and update progress ring
+    function updateProgressRing() {
+        const totalSeconds = timerConfig[currentMode].minutes * 60 + timerConfig[currentMode].seconds;
+        const secondsLeft = minutes * 60 + seconds;
+        const progress = ((totalSeconds - secondsLeft) / totalSeconds) * 100;
+        const circumference = 2 * Math.PI * 45; // 45 is the radius of the circle
+        const dashOffset = circumference - (circumference * progress / 100);
+        progressRing.setAttribute('stroke-dashoffset', dashOffset);
+        progressRing.setAttribute('stroke-dasharray', circumference);
+    }
+    
+    // Format time spent
+    function formatTimeSpent() {
+        const hours = Math.floor(timeSpent / 3600);
+        const minutes = Math.floor((timeSpent % 3600) / 60);
+        return `${hours}h ${minutes}m`;
+    }
+    
+    // Reset timer based on mode
+    function resetTimer(mode = currentMode) {
+        clearInterval(timerInterval);
+        isRunning = false;
+        toggleButton.classList.remove('active');
+        playPauseIcon.innerHTML = '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />';
+        
+        minutes = timerConfig[mode].minutes;
+        seconds = timerConfig[mode].seconds;
+        updateTimerDisplay();
+    }
+    
+    // Change timer mode
+    function changeMode(mode) {
+        currentMode = mode;
+        resetTimer(mode);
+        updateModeUI();
+    }
+    
+    // Start/Pause timer
+    function toggleTimer() {
+        if (isRunning) {
+            clearInterval(timerInterval);
+            isRunning = false;
+            toggleButton.classList.remove('active');
+            playPauseIcon.innerHTML = '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />';
+            return;
+        }
+        
+        isRunning = true;
+        toggleButton.classList.add('active');
+        playPauseIcon.innerHTML = '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />';
+        
+        timerInterval = setInterval(() => {
+            // Track time spent for focus sessions
+            if (currentMode === 'focus') {
+                timeSpent++;
+                timeSpentDisplay.textContent = formatTimeSpent();
+            }
+            
+            if (seconds === 0) {
+                if (minutes === 0) {
+                    // Timer complete
+                    clearInterval(timerInterval);
+                    isRunning = false;
+                    toggleButton.classList.remove('active');
+                    playPauseIcon.innerHTML = '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />';
+                    
+                    // Play sound
+                    timerEndSound.play();
+                    
+                    // Show notification
+                    showNotification(currentMode === 'focus' ? 'Break time!' : 'Focus time!');
+                    
+                    // Handle session completion
+                    if (currentMode === 'focus') {
+                        completedSessions++;
+                        sessionsCountDisplay.textContent = completedSessions;
+                        completedSessionsDisplay.textContent = completedSessions;
+                        
+                        // Add to task history if there is a task
+                        if (currentTaskInput.value.trim()) {
+                            addToTaskHistory(currentTaskInput.value.trim());
+                        }
+                    }
+                    
+                    // Auto switch to next mode after a short delay
+                    setTimeout(() => skipTimer(), 500);
+                    
+                    return;
+                }
+                
+                minutes--;
+                seconds = 59;
+            } else {
+                seconds--;
+            }
+            
+            updateTimerDisplay();
+        }, 1000);
+    }
+    
+    // Skip to next timer
+    function skipTimer() {
+        let nextMode;
+        
+        if (currentMode === 'focus') {
+            // After focus, go to a break
+            nextMode = completedSessions % 4 === 3 ? 'longBreak' : 'shortBreak';
+            
+            // If we're skipping from a focus session, count it as completed
+            // but only if some time has passed
+            if (minutes < timerConfig.focus.minutes || seconds < timerConfig.focus.seconds) {
+                completedSessions++;
+                sessionsCountDisplay.textContent = completedSessions;
+                completedSessionsDisplay.textContent = completedSessions;
+                
+                // Add to task history if there is a task
+                if (currentTaskInput.value.trim()) {
+                    addToTaskHistory(currentTaskInput.value.trim());
+                }
+            }
+        } else {
+            // After any break, go back to focus
+            nextMode = 'focus';
+        }
+        
+        changeMode(nextMode);
+    }
+    
+    // Add completed task to history
+    function addToTaskHistory(taskName) {
+        const now = new Date();
+        const taskTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        
+        taskHistory.unshift({
+            name: taskName,
+            time: taskTime,
+            type: currentMode
+        });
+        
+        // Limit history to 10 items
+        if (taskHistory.length > 10) {
+            taskHistory.pop();
+        }
+        
+        updateTaskHistory();
+        
+        // Reset task input
+        currentTaskInput.value = '';
+    }
+    
+    // Update task history in UI
+    function updateTaskHistory() {
+        const taskHistoryContainer = document.querySelector('.task-history-list');
+        if (!taskHistoryContainer) {
+            createTaskHistorySection();
+            return;
+        }
+        
+        taskHistoryContainer.innerHTML = '';
+        
+        if (taskHistory.length === 0) {
+            taskHistoryContainer.innerHTML = '<div class="text-center py-3 text-gray-400">No completed tasks yet</div>';
+            return;
+        }
+        
+        taskHistory.forEach(task => {
+            const taskItem = document.createElement('div');
+            taskItem.className = 'task-history-item';
+            taskItem.innerHTML = `
+                <div class="task-history-info">
+                    <div class="task-type-indicator ${task.type}"></div>
+                    <div class="task-history-name">${task.name}</div>
+                </div>
+                <div class="task-history-time">${task.time}</div>
+            `;
+            taskHistoryContainer.appendChild(taskItem);
+        });
+    }
+    
+    // Create task history section
+    // Create task history section
+    function createTaskHistorySection() {
+        const container = document.querySelector('.pomodoro-container');
+        
+        const taskHistorySection = document.createElement('div');
+        taskHistorySection.className = 'task-history';
+        
+        taskHistorySection.innerHTML = `
+            <div class="task-history-header">
+                <h3>Recent Tasks</h3>
+            </div>
+            <div class="task-history-list"></div>
+        `;
+        
+        container.appendChild(taskHistorySection);
+        updateTaskHistory();
+    }
+    
+    // Show notification
+    function showNotification(message) {
+        // Create notification if it doesn't exist
+        let notification = document.querySelector('.notification');
+        
+        if (!notification) {
+            notification = document.createElement('div');
+            notification.className = 'notification';
+            document.body.appendChild(notification);
+        }
+        
+        // Set message
+        notification.innerHTML = `
+            <div class="notification-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 20 20" fill="currentColor" width="20" height="20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            ${message}
+        `;
+        
+        // Show notification
+        notification.classList.add('show');
+        
+        // Hide after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+    
+    // Local storage functions
+    function saveState() {
+        const state = {
+            completedSessions,
+            timeSpent,
+            taskHistory
+        };
+        
+        localStorage.setItem('pomodoro-state', JSON.stringify(state));
+    }
+    
+    function loadState() {
+        const savedState = localStorage.getItem('pomodoro-state');
+        
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            completedSessions = state.completedSessions || 0;
+            timeSpent = state.timeSpent || 0;
+            taskHistory = state.taskHistory || [];
+            
+            sessionsCountDisplay.textContent = completedSessions;
+            completedSessionsDisplay.textContent = completedSessions;
+            timeSpentDisplay.textContent = formatTimeSpent();
+            
+            // Create task history section if there are tasks
+            if (taskHistory.length > 0) {
+                createTaskHistorySection();
+            }
+        }
+    }
+    
+    // Add event listeners
+    toggleButton.addEventListener('click', toggleTimer);
+    resetButton.addEventListener('click', () => resetTimer());
+    skipButton.addEventListener('click', skipTimer);
+    
+    focusModeBtn.addEventListener('click', () => changeMode('focus'));
+    shortBreakModeBtn.addEventListener('click', () => changeMode('shortBreak'));
+    longBreakModeBtn.addEventListener('click', () => changeMode('longBreak'));
+    
+    // Save state every minute
+    setInterval(saveState, 60000);
+    
+    // Initialize
+    loadState();
+    updateModeUI();
+    updateTimerDisplay();
+    
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Space bar to start/pause
+        if (e.code === 'Space' && document.activeElement !== currentTaskInput) {
+            e.preventDefault(); // Prevent scrolling
+            toggleTimer();
+        }
+        
+        // R key to reset
+        if (e.code === 'KeyR' && document.activeElement !== currentTaskInput) {
+            resetTimer();
+        }
+        
+        // S key to skip
+        if (e.code === 'KeyS' && document.activeElement !== currentTaskInput) {
+            skipTimer();
+        }
+    });
+});
+    </script>
+</body>
+</html>
