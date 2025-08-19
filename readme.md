@@ -26,10 +26,13 @@ It brings together **programming practice, aptitude prep, and resources** into o
 
 ## 📷 Screenshots
 
-![Home Page](./screenshots/home.png)  
-![Practice Section](./screenshots/practice.png)
+![Home Page](home.jpg)
 
----
+![Home Page](home1.jpg)
+
+![Dasshboard](dash.jpg)
+
+## ![Dasshboard](dash1.jpg)
 
 ## 📌 How to Use
 
